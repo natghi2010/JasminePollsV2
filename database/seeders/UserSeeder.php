@@ -7,12 +7,12 @@ use Illuminate\Database\Seeder;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-
 use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 
 {
+
     /**
 
     * Run the database seeds.
@@ -23,8 +23,8 @@ class UserSeeder extends Seeder
      public function run()
     {
         $predefinedUsers = [
-            ['name' => 'Natnael', 'email' => 'natghi2010@gmail.com'],
 
+            ['name' => 'Natnael', 'email' => 'natghi2010@gmail.com'],
             ['name' => 'Fikir', 'email' => 'fikir@gmail.com'],
             ['name' => 'Bisrat', 'email' => 'bisrat@gmail.com'],
             ['name' => 'Yohannes', 'email' => 'yohannes@gmail.com'],
@@ -33,8 +33,8 @@ class UserSeeder extends Seeder
         $usersToInsert = array_map(function ($user) {
             return [
                 'name' => $user['name'],
-                'email' => $user['email'],
 
+                'email' => $user['email'],
                 'user_level' => UserLevelEnums::ADMIN,
                 'email_verified_at' => now(),
                 'password' => Hash::make('password'), // Using the default password from the factory

@@ -19,7 +19,10 @@ class AuthService
     }
 
 
+
+
     public static function logout(){
         auth()->logout();
+
     }
 }
