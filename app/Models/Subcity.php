@@ -16,11 +16,11 @@ class Subcity extends Model
     ];
 
     public function weredas(){
-        return $this->hasMany('App\Wereda', 'subcity_id','id');
+        return $this->hasMany(Wereda::class, 'subcity_id','id');
     }
 
     public function city(){
-        return $this->belongsTo('App\City', 'city_id','id');
+        return $this->belongsTo(City::class, 'city_id','id');
     }
 
 }

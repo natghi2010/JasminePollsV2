@@ -13,6 +13,7 @@ class UserSeeder extends Seeder
 
 {
 
+
     /**
 
     * Run the database seeds.
@@ -22,6 +23,7 @@ class UserSeeder extends Seeder
 
      public function run()
     {
+
         $predefinedUsers = [
 
             ['name' => 'Natnael', 'email' => 'natghi2010@gmail.com'],

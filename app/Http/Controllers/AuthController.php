@@ -20,12 +20,23 @@ class AuthController extends Controller
 
 
 
-    public function login(LoginRequest $request){
-        if($user = AuthService::login($request->username, $request->password)){
+    public function login(Request $request){
+
+
+
+        if($user = AuthService::login($request->email, $request->password)){
             return redirect()->route('home');
+
         }else{
 
             return redirect()->back()->with('error', 'Invalid username or password');
         }
+    }
+
+
+    public function logout(){
+        auth()->logout();
+        return redirect()->route('login');
+
     }
 }

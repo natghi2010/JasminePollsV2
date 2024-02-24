@@ -9,8 +9,8 @@ class AuthService
 
 
 
-    public static function login(string $username, string $password): User|bool{
-        if(auth()->attempt(['username' => $username, 'password' => $password])){
+    public static function login(string $email, string $password): User|bool{
+        if(auth()->attempt(['email' => $email, 'password' => $password])){
             return auth()->user();
         }else{
 
