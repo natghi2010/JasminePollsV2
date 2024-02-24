@@ -101,7 +101,19 @@ public function defineStats($value){
                 WHEN ROUND(AVG(results.value)/5*100,2) < 80 AND ROUND(AVG(results.value)/5*100,2) >= 60 THEN "yellow"
                 ELSE "red"
                 END as color'
-    ))
+),
+
+
+    \DB::raw('CASE
+                WHEN ROUND(AVG(results.value)/5*100,2) >= 95 THEN "success"
+                WHEN ROUND(AVG(results.value)/5*100,2) < 95 AND ROUND(AVG(results.value)/5*100,2) >= 80 THEN "info"
+                WHEN ROUND(AVG(results.value)/5*100,2) < 80 AND ROUND(AVG(results.value)/5*100,2) >= 60 THEN "warning"
+                ELSE "danger"
+                END as class')
+    )
+
+
+
 
 
    ->where(function($q) use ($filters){
