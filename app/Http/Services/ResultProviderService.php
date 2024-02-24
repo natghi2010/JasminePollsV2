@@ -77,7 +77,7 @@ public function defineStats($value){
 
 
 
-    public static function getResultData($type = FilterType::SECTOR){
+    public static function getResultData($type = FilterType::SECTOR,$filters=[]){
 
         $singularEntity = Str::singular($type);
 
@@ -102,6 +102,14 @@ public function defineStats($value){
                 ELSE "red"
                 END as color'
     ))
+
+
+   ->where(function($q) use ($filters){
+                foreach ($filters as $key => $value){
+                    $q->where('results.'.$key,$value);
+                }
+
+   })
 
             ->groupBy($type.'.id',$type.'.name')
             ->get();

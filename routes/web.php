@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\FilterType;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ResultController;
@@ -53,8 +54,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 
-
     Route::get('/test',function(){
-            return ResultProviderService::getResultData();
+            return ResultProviderService::getResultData(type:FilterType::CITY,filters: [
+                'sector_id' => 1,
+                'question_id' => 4,
+            ]);
     });
 });

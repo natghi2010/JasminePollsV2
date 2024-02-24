@@ -9,6 +9,8 @@ class FilterType
     const WEREDA = 'weredas';
     const SECTOR = 'sectors';
 
+    const QUESTION = 'questions';
+
 
 
     public static function getAll(){
