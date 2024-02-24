@@ -50,6 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/subcity/{id}', [ResultController::class, 'getSubcity']);
 
     Route::get('/graphApi/subcity', [ResultController::class, 'getSubcitiesForGraphs']);
+    Route::get('/graphApi/questions', [ResultController::class, 'getQuestionGraphsForGraphs']);
     Route::get('/graphApi/sector/{type}',[ResultController::class,'getSectorsForGraphs']);
 
 
