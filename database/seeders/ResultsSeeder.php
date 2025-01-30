@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Seeders;
 
 use App\Enums\AreaTypeEnums;
@@ -11,11 +10,10 @@ use App\Models\Subcity;
 use App\Models\Wereda;
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ResultsSeeder extends Seeder
 {
-
-    private $carbon;
     /**
      * Run the database seeds.
      *
@@ -23,34 +21,50 @@ class ResultsSeeder extends Seeder
      */
     public function run()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;'); // Disable foreign key checks for speed
+        Result::query()->truncate(); // Clear existing records
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;'); // Re-enable foreign key checks
+
         $questions = Question::all();
         $sectors = Sector::all();
-        $this->carbon = Carbon::now();
+        $cities = City::all();
+        $subcities = Subcity::all();
+        $weredas = Wereda::all()->groupBy('subcity_id'); // Group by subcity to avoid multiple queries
+
         $week = date('w');
         $month = date('m');
         $year = date('Y');
+        $carbon = Carbon::now();
 
-        Result::query()->truncate(); // Clear existing records
+        $insertData = [];
 
         foreach ($questions as $question) {
             foreach ($sectors as $sector) {
-                foreach (City::all() as $city) {
-                    $this->createResult($city->id, null, $sector->id, $question, AreaTypeEnums::CITY, $week, $month, $year);
-                    foreach (Subcity::all() as $subcity) {
-                        $this->createResult($city->id, $subcity->id, $sector->id, $question, AreaTypeEnums::SUBCITY, $week, $month, $year);
-                        $weredas = Wereda::where('subcity_id', $subcity->id)->get();
-                        foreach ($weredas as $wereda) {
-                            $this->createResult($city->id, $subcity->id, $sector->id, $question, AreaTypeEnums::WEREDA, $week, $month, $year, $wereda->id);
+                foreach ($cities as $city) {
+                    $insertData[] = $this->prepareResultData($city->id, null, $sector->id, $question, AreaTypeEnums::CITY, $week, $month, $year, $carbon);
+
+                    foreach ($subcities->where('city_id', $city->id) as $subcity) {
+                        $insertData[] = $this->prepareResultData($city->id, $subcity->id, $sector->id, $question, AreaTypeEnums::SUBCITY, $week, $month, $year, $carbon);
+
+                        if (isset($weredas[$subcity->id])) {
+                            foreach ($weredas[$subcity->id] as $wereda) {
+                                $insertData[] = $this->prepareResultData($city->id, $subcity->id, $sector->id, $question, AreaTypeEnums::WEREDA, $week, $month, $year, $carbon, $wereda->id);
+                            }
                         }
                     }
                 }
             }
         }
+
+        // **Insert in bulk**
+        foreach (array_chunk($insertData, 5000) as $batch) {
+            Result::insert($batch);
+        }
     }
 
-    private function createResult($cityId, $subcityId, $sectorId, $question, $areaType, $week, $month, $year, $weredaId = null)
+    private function prepareResultData($cityId, $subcityId, $sectorId, $question, $areaType, $week, $month, $year, $carbon, $weredaId = null)
     {
-        Result::create([
+        return [
             "city_id" => $cityId,
             "subcity_id" => $subcityId,
             "sector_id" => $sectorId,
@@ -62,12 +76,7 @@ class ResultsSeeder extends Seeder
             "year" => $year,
             "question_type" => $question->type,
             "wereda_id" => $weredaId,
-            "created_at" => $this->generateRandomDate($this->carbon),
-        ]);
-    }
-
-    private function generateRandomDate($carbon)
-    {
-        return $carbon->copy()->subDays(rand(0, 365))->toDateTimeString();
+            "created_at" => $carbon->copy()->subDays(rand(0, 365))->toDateTimeString(),
+        ];
     }
 }
